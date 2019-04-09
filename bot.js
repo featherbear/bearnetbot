@@ -33,9 +33,9 @@ const fs = require("fs");
 
   bot.id = bot.session.tokens.uid;
   bot.admins = config.bot_admins;
-  console.log(`User ID: ${bot.id}\nAdmins: ${bot.admins}`);
+  bot.command_prefix = config.bot_command_prefix;
 
-  let _commandNames = ["help"];
+  let _commandNames = ["help", "wake-on-lan", "rng", "info", "paiza.io", "lmgtfy", "life360"];
   let commands = {};
   for (let command of _commandNames) {
     commands[command] = require(`./commands/${command}`)(bot);
@@ -43,14 +43,17 @@ const fs = require("fs");
       commands[command].name = Array(commands[command].name);
     }
   }
+  bot.commands = commands;
+
   let commandMap = {};
   for (let command in commands) {
     for (let name of commands[command].name) {
       commandMap[name.toLowerCase()] = commands[command];
     }
   }
+  bot.commandMap = commandMap;
 
-  bot.on("message", message => {
+  bot.on("message", async message => {
     // {
     //     threadId: int,
     //     attachments: array,
@@ -73,17 +76,22 @@ const fs = require("fs");
     // Check of the command exists
     if (commandStr in commandMap) {
       // Check if the user has permission to run the command
-      if (commandMap[commandStr].admin && !(message.authorId in bot.admins)) {
+      if (
+        commandMap[commandStr].admin &&
+        bot.admins.indexOf(message.authorId) == -1
+      ) {
         bot.sendMessage(
           message.threadId,
           "Error: You do not have permission to execute this command!"
         );
+        console.info(`${message.authorId} tried to execute \`${commandStr}\``);
         return;
       }
 
       // Try run the command
       try {
-        let response = commandMap[commandStr].function(
+        let response = await commandMap[commandStr].function(
+          message,
           tokens.slice(1).join(" ")
         );
         if (response) {
@@ -91,7 +99,7 @@ const fs = require("fs");
         }
         // Catch exception messages
       } catch (err) {
-        bot.sendMessage(message.threadId, `Error: ${err}`);
+        bot.sendMessage(message.threadId, `${err}`);
       }
     } else {
       // Command not found!!
