@@ -35,35 +35,42 @@ const fs = require("fs");
   bot.admins = config.bot_admins;
   bot.command_prefix = config.bot_command_prefix;
 
-  let _commandNames = ["help", "wake-on-lan", "rng", "info", "paiza.io", "lmgtfy", "life360"];
+  let _modules = [
+    "help",
+    "wake-on-lan",
+    "rng_range",
+    "rng_choice",
+    "info",
+    "paiza.io",
+    "lmgtfy",
+    "life360",
+    "permissions"
+  ];
   let commands = {};
-  for (let command of _commandNames) {
-    commands[command] = require(`./commands/${command}`)(bot);
-    if (typeof commands[command].name === "string") {
-      commands[command].name = Array(commands[command].name);
+  for (let commandStr of _modules) {
+    try {
+      commands[commandStr] = require(`./modules/${commandStr}`)(bot);
+      if (typeof commands[commandStr].name === "string") {
+        commands[commandStr].name = Array(commands[commandStr].name);
+      }
+    } catch {
+      console.error(`Could not load \`${commandStr}.js\``);
     }
   }
   bot.commands = commands;
 
   let commandMap = {};
-  for (let command in commands) {
-    for (let name of commands[command].name) {
-      commandMap[name.toLowerCase()] = commands[command];
+  for (let commandStr in commands) {
+    for (let name of commands[commandStr].name) {
+      commandMap[name.toLowerCase()] = commands[commandStr];
     }
   }
+
   bot.commandMap = commandMap;
-
+  bot.commandRequiresAdmin = function(commandStr) {
+    return commandMap[commandStr].admin;
+  };
   bot.on("message", async message => {
-    // {
-    //     threadId: int,
-    //     attachments: array,
-    //     authorId: int,
-    //     id: str',
-    //     timestamp: epoch,
-    //     message: str,
-    //     stickerId: int
-    // }
-
     // Check if the message starts with the command prefix
     if (!message.message.startsWith(config.bot_command_prefix)) return;
 
@@ -77,7 +84,7 @@ const fs = require("fs");
     if (commandStr in commandMap) {
       // Check if the user has permission to run the command
       if (
-        commandMap[commandStr].admin &&
+        bot.commandRequiresAdmin(commandStr) &&
         bot.admins.indexOf(message.authorId) == -1
       ) {
         bot.sendMessage(
@@ -106,5 +113,10 @@ const fs = require("fs");
     }
   });
 
+  for (let commandStr in commands) {
+    if (commands[commandStr].onFinishLoad) {
+      commands[commandStr].onFinishLoad();
+    }
+  }
   console.info("Loading complete");
 })();
