@@ -1,6 +1,6 @@
 module.exports = function(api) {
     return {
-      name: ["rng"],
+      name: ["choice"],
       admin: false,
       description: "Consult the mystical RNG!11oneone",
       function: function(messageObj, str) {
