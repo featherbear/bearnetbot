@@ -1,34 +1,28 @@
+const translate = require('@k3rn31p4nic/google-translate-api');
+let messageHistory = new (class{constructor(){this.history=[]}push(d){if(this.history.length==30)this.history=this.history.slice(1);this.history.push(d)}})();
 
+module.exports = function(api) {
+  return {
+    name: ["translate", "nani", "what"],
+    admin: false,
+    description: "Sorry I only speak English",
+    function: async function(messageObj, inputStr) {
+      if (!inputStr.trim()) {
+        inputStr = messageHistory.history.filter(msg => !msg.startsWith(api.command_prefix) && msg.replace(/[\x00-\x7E]/g, "").length).pop()
+        if (!inputStr) throw Error("No input provided to translate!")
+      }
 
-            // translate: {
-            //     desc: "Sorry I only speak English",
-            //     exec: function(str) {
-            //         var doIt = str => translate(str, {
-            //             to: 'en'
-            //         }).then(res => {
-            //             api.sendMessage(
-            //                 "`(" + res.from.language.iso + ")` " + str.replace("\n", " ").trim() + "\n" +
-            //                 "`(en)` " + res.text.replace("\n", " ").trim(), event.threadID)
-            //         }).catch(err => {
-            //             console.error(err);
-            //         });
+      let res = await translate(inputStr, { to: 'en' });
 
-            //         if (!str) {
-            //             api.getThreadHistory(event.threadID, 20, undefined, (err, history) => {
-            //                 message = history.filter(info =>
-            //                     info.type === "message" &&
-            //                     info.senderID != botID &&
-            //                     !info.body.startsWith(_commandprefix) &&
-            //                     info.body.replace(/[\x00-\x7E]/g, "").length).pop()
-            //                 if (message) {
-            //                     doIt(message.body)
-            //                 } else {
-            //                     api.sendMessage("No recent messages to translate!", event.threadID)
-            //                 }
-            //             })
-            //         } else {
-            //             doIt(str)
-            //         }
-
-            //     }
-            // },
+      // There's nothing interesting in the getThreadInfo function
+      return "`(" + res.from.language.iso + ")` " + inputStr.replace("\n", " ").trim() + "\n" +
+             "`(en)` " + res.text.replace("\n", " ").trim();
+    },
+    onFinishLoad: function() {
+      api.on('message', function (message) {
+        if (api.id == message.authorId) return;
+        if (message.message) messageHistory.push(message.message);
+      })
+    }
+  };
+};

@@ -3,19 +3,19 @@ const libfb = require("libfb");
 const fs = require("fs");
 
 (async () => {
-  let bot;
-  try {
-    // Login
-    bot = await libfb.login(
-      config.facebook_username,
-      config.facebook_password,
-      {
+  let bot = new libfb.Client({
         selfListen: true,
         // Read session if exists
         session: fs.existsSync(__dirname + "/.appstate.json")
           ? JSON.parse(fs.readFileSync(__dirname + "/.appstate.json", "utf8"))
           : undefined
-      }
+  });
+  
+  try {
+    // Login
+    await bot.login(
+      config.facebook_username,
+      config.facebook_password,
     );
   } catch (err) {
     // Login errors
@@ -44,12 +44,13 @@ const fs = require("fs");
     "paiza.io",
     "lmgtfy",
     "life360",
-    "permissions"
+    "permissions",
+    "translate"
   ];
   let commands = {};
   for (let commandStr of _modules) {
     try {
-      commands[commandStr] = require(`./modules/${commandStr}`)(bot);
+      commands[commandStr] = require(__dirname + `/modules/${commandStr}`)(bot);
       if (typeof commands[commandStr].name === "string") {
         commands[commandStr].name = Array(commands[commandStr].name);
       }
