@@ -45,8 +45,10 @@ const fs = require("fs");
     "lmgtfy",
     "life360",
     "permissions",
-    "translate"
+    "translate",
+    "todo"
   ];
+
   let commands = {};
   for (let commandStr of _modules) {
     try {
@@ -54,8 +56,9 @@ const fs = require("fs");
       if (typeof commands[commandStr].name === "string") {
         commands[commandStr].name = Array(commands[commandStr].name);
       }
-    } catch {
+    } catch (e) {
       console.error(`Could not load \`${commandStr}.js\``);
+      console.log(e);
     }
   }
   bot.commands = commands;
@@ -114,6 +117,12 @@ const fs = require("fs");
     }
   });
 
+  
+  for (let commandStr in commands) {
+    if (commands[commandStr].onPreLoad) {
+      commands[commandStr].onPreLoad();
+    }
+  }
   for (let commandStr in commands) {
     if (commands[commandStr].onFinishLoad) {
       commands[commandStr].onFinishLoad();
