@@ -1,9 +1,6 @@
 const wol = require("node-wol");
-const config = {
-  MAC: "11:AA:22:BB:33:CC",
-  address: "somehostnameoripaddress",
-  port: 9
-};
+const config = require('../.config')
+
 module.exports = function(api) {
   return {
     name: ["wol"],
@@ -12,10 +9,10 @@ module.exports = function(api) {
     function: async function() {
       return new Promise(function(resolve, reject) {
         wol.wake(
-          config.MAC,
+          config.wol_mac,
           {
-            address: config.address,
-            port: config.port
+            address: config.wol_address,
+            port: config.wol_port
           },
           err => (err ? reject(err) : resolve("Sent WOL Magic Packet"))
         );
