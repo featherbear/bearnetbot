@@ -42,6 +42,11 @@ module.exports = function (api) {
 
       async function view () {
         const cards = await trello.getCardsForList(listId)
+
+        if (cards.length == 0) {
+          return 'No entries for this chat'
+        }
+
         const results = []
 
         for (let i = 0; i < cards.length; i++) {
