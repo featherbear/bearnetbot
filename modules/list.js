@@ -6,7 +6,6 @@ const trello = new TrelloAPI(config.trello_key, config.trello_token)
 const boardName = 'BearNet Bot'
 
 let boardId = null
-const listId = null
 
 let isReady = false
 
@@ -24,7 +23,7 @@ async function init () {
 async function getListId (listName) {
   const lists = await trello.getListsOnBoard(boardId)
 
-  let list = lists.find(l => l.name == listName)
+  let list = lists.find(l => l.name === listName)
   if (!list) list = await trello.addListToBoard(boardId, listName)
 }
 
@@ -75,8 +74,8 @@ module.exports = function (api) {
         case 'remove':
           if (content.length == 0) throw new Error('Supply an entry name!')
 
-          const cards = await trello.getCardsForList(listId)
-          const card = cards.find(c => c.name == content)
+          var cards = await trello.getCardsForList(listId)
+          var card = cards.find(c => c.name == content)
 
           if (!card) {
             throw new Error('Entry not found!')
