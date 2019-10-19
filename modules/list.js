@@ -1,46 +1,48 @@
 const TrelloAPI = require('trello')
 const config = require('../.config')
 
-let trello = new TrelloAPI(config.trello_key, config.trello_token)
+const trello = new TrelloAPI(config.trello_key, config.trello_token)
 
 const boardName = 'BearNet Bot'
-const listName = 'Todo'
 
 let boardId = null
-let listId = null
+const listId = null
 
 let isReady = false
 
 async function init () {
-  let boards = await trello.getBoards(config.trello_user)
+  const boards = await trello.getBoards(config.trello_user)
 
   let board = boards.find(b => b.name == boardName)
   if (!board) board = await trello.addBoard(boardName)
 
   boardId = board.id
 
-  let lists = await trello.getListsOnBoard(boardId)
+  isReady = true
+}
+
+async function getListId (listName) {
+  const lists = await trello.getListsOnBoard(boardId)
 
   let list = lists.find(l => l.name == listName)
   if (!list) list = await trello.addListToBoard(boardId, listName)
-
-  listId = list.id
-
-  isReady = true
 }
 
 module.exports = function (api) {
   return {
-    name: ['todo'],
+    name: ['list'],
     admin: false,
-    description: 'Brb completing bucketlist!',
+    description: 'Lists!',
     onPreLoad: init,
+    onFinishLoad: () => console.log('Trello API loaded!'),
     function: async function (messageObj, message) {
       if (!isReady) throw new Error('Command not ready yet')
 
+      const listId = await getListId(messageObj.threadId)
+
       async function view () {
-        let cards = await trello.getCardsForList(listId)
-        let results = []
+        const cards = await trello.getCardsForList(listId)
+        const results = []
 
         for (let i = 0; i < cards.length; i++) {
           results.push(`${i + 1}. ${cards[i].name}`)
@@ -53,10 +55,10 @@ module.exports = function (api) {
         return await view()
       }
 
-      let messages = message.split(' ')
+      const messages = message.split(' ')
 
-      let action = messages[0]
-      let content = messages.slice(1).join(' ')
+      const action = messages[0]
+      const content = messages.slice(1).join(' ')
 
       switch (action.toLowerCase()) {
         case 'add':
@@ -68,8 +70,8 @@ module.exports = function (api) {
         case 'remove':
           if (content.length == 0) throw new Error('Supply an entry name!')
 
-          let cards = await trello.getCardsForList(listId)
-          let card = cards.find(c => c.name == content)
+          const cards = await trello.getCardsForList(listId)
+          const card = cards.find(c => c.name == content)
 
           if (!card) {
             throw new Error('Entry not found!')
@@ -80,7 +82,6 @@ module.exports = function (api) {
           return 'Entry deleted!'
 
         case 'show':
-        case 'list':
         case 'view':
           return await view()
 
