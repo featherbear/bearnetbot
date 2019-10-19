@@ -77,13 +77,14 @@ module.exports = function (api) {
           if (content.length == 0) throw new Error('Supply an entry name!')
 
           var cards = await trello.getCardsForList(listId)
-          var card = cards.find(c => c.name == content)
 
-          if (!card) {
-            throw new Error('Entry not found!')
+          var index = parseInt(content, 10)
+
+          if (index < 1 || index > cards.length) {
+            throw new Error('Invalid entry id')
           }
 
-          await trello.deleteCard(card.id)
+          await trello.deleteCard(cards[index - 1].id)
 
           return 'Entry deleted!'
 
