@@ -25,6 +25,8 @@ async function getListId (listName) {
 
   let list = lists.find(l => l.name === listName)
   if (!list) list = await trello.addListToBoard(boardId, listName)
+
+  return list.id
 }
 
 module.exports = function (api) {
