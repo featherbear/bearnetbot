@@ -1,5 +1,5 @@
 #!/bin/sh
 while true; do
-    nodejs bot.js
+    node bot.js
     [ $? -ne 137 ] && break
 done
