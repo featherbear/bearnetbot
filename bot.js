@@ -45,6 +45,7 @@ const Client = require('facebook-messenger-puppeteer')
     'life360',
     'permissions',
     'translate',
+    'ping',
     'list'
   ]
 
