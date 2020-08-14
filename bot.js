@@ -78,7 +78,36 @@ const Client = require('facebook-messenger-puppeteer')
   bot.commandRequiresAdmin = function (commandStr) {
     return commandMap[commandStr].admin
   }
+
+  let ignore = {};
+
   bot.listen(async message => {
+    
+    const timerIgnore = () =>
+      setTimeout(() => {
+        delete ignore[message.thread]
+      }, 60 * 1000)
+
+    // setTimeout returns an object in Node.js
+    if (typeof ignore[message.thread] === 'object') {
+      if (/no/gi.test(message.body)) {
+        clearTimeout(ignore[message.thread])
+        timerIgnore()
+        ignore[message.thread] = true
+
+        await bot.sendMessage(message.thread, 'Oh, okay :(')
+        return
+      }
+    }
+
+    if (/b\s*e\s*a\s*r/gi.test(message.body)) {
+      if (ignore[message.thread] !== true) {
+        ignore[message.thread] = timerIgnore()
+        await bot.sendMessage(message.thread, 'Who, me?')
+        return
+      }
+    } 
+  
     // Check if the message starts with the command prefix
     if (!message.body.startsWith(config.bot_command_prefix)) return
 
