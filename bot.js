@@ -107,6 +107,14 @@ const Client = require('facebook-messenger-puppeteer')
         return
       }
     } 
+    
+    if (/hm+/gi.test(message.body)) {
+      if (ignore[message.thread] !== true) {
+        ignore[message.thread] = timerIgnore()
+        await bot.sendMessage(message.thread, '\u1F914')
+        return
+      }
+    } 
   
     // Check if the message starts with the command prefix
     if (!message.body.startsWith(config.bot_command_prefix)) return
