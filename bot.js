@@ -115,6 +115,17 @@ const Client = require('facebook-messenger-puppeteer')
         return
       }
     } 
+    
+    if (/^i'?m /gi.test(message.body)) {
+      if (ignore[message.thread] !== true) {
+        ignore[message.thread] = timerIgnore()
+        const str = message.body.split('.')
+        str = str[0].replace(/i'?m/gi, "Hello")
+        const concatStr = str.concat("! I'm BearNetBot. Nice to meet you!")
+        await bot.sendMessage(message.thread, concatStr)
+        return
+      }
+    } 
   
     // Check if the message starts with the command prefix
     if (!message.body.startsWith(config.bot_command_prefix)) return
