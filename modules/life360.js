@@ -1,5 +1,5 @@
 const request = require('request')
-const moment = require('moment')
+const moment = require('moment-timezone')
 const config = require('../.config')
 
 let _life360_request_
@@ -83,7 +83,7 @@ module.exports = function (api) {
             }
             var asof =
               '\n_Position as of ' +
-              moment(data.last).format('h:mm a Do MMMM YYYY') +
+              moment(data.last).tz("Australia/Sydney").format('h:mm a Do MMMM YYYY zz') +
               '_'
 
             for (const point of (config.life360_points || [])) {
