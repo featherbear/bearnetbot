@@ -64,7 +64,7 @@ module.exports = function (api) {
       if (!config.life360_enable) throw Error('Life360 not enabled')
       if (!_life360_ready) throw Error('Life360 not ready')
       console.log(
-        '*NOTICE: Location requested by ' + messageObj.authorId + '*'
+        '*NOTICE: Location requested by ' + messageObj.sender + '*'
       )
 
       //   if (message) api.sendMessage("Locating...", event.threadID);

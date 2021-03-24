@@ -67,7 +67,7 @@ module.exports = function (api) {
         if (check) return true
         if (typeof check === 'undefined') {
           if (!api.commandMap[commandStr]._admin) return true
-          if (api.admins.indexOf(messageObj.authorId) > -1) return true
+          if (api.admins.indexOf(Number(messageObj.sender)) > -1) return true
         }
         return false
       })()
