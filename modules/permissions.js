@@ -157,7 +157,7 @@ module.exports = function (api) {
       const nameStr = args.slice(1, -1).join(' ')
       const permission = args.slice(-1)
 
-      return await this.funcs[command](messageObj, nameStr, permission)
+      return await funcs[command](messageObj, nameStr, permission)
     },
     onFinishLoad: function () {
       // Set wrapper
