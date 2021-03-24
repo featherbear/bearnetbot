@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@k3rn31p4nic/google-translate-api": "^1.1.1",
-    "facebook-messenger-puppeteer": "github:featherbear/facebook-messenger-puppeteer#v1.1.0",
+    "facebook-messenger-puppeteer": "github:featherbear/facebook-messenger-puppeteer#e44012c5ab691519b353c07da95fb14677c129c4",
     "moment-timezone": "^0.5.33",
     "node-wol": "^0.1.1",
     "request": "^2.88.0",
