@@ -98,6 +98,15 @@ const Client = require('facebook-messenger-puppeteer')
         await bot.sendMessage(message.thread, 'Oh, okay :(')
         return
       }
+      
+      if (/yes/gi.test(message.body)) {
+        clearTimeout(ignore[message.thread])
+        timerIgnore()
+        ignore[message.thread] = true
+
+        await bot.sendMessage(message.thread, '??')
+        return
+      }
     }
 
     if (/b\s*e\s*a\s*r/gi.test(message.body)) {
