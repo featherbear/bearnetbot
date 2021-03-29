@@ -39,7 +39,7 @@ module.exports = function (api) {
     function: async function (messageObj, message) {
       if (!isReady) throw new Error('Command not ready yet')
 
-      const listId = await getListId(messageObj.threadId)
+      const listId = await getListId(messageObj.thread)
 
       async function view () {
         const cards = await trello.getCardsForList(listId)
