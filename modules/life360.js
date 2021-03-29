@@ -112,7 +112,7 @@ module.exports = function (api) {
                     )
                   }
                   stringBuilder.push(
-                    `Coordinates: ${data.lat}, ${data.long}${asof}`
+                    `Coordinates: \`${data.lat}, ${data.long}${asof}\``
                   )
                   stringBuilder.push('')
                   stringBuilder.push(
