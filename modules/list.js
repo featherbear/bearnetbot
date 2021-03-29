@@ -80,7 +80,7 @@ module.exports = function (api) {
 
           var index = parseInt(content, 10)
 
-          if (index < 1 || index > cards.length) {
+          if (index < 1 || index > cards.length || isNaN(index)) {
             throw new Error('Invalid entry id')
           }
 
