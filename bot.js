@@ -172,10 +172,10 @@ const Client = require('facebook-messenger-puppeteer')
   }
   console.info('Loading complete')
 
-  // let _restartTime = (new Date().setHours(23, 59, 0, 0) - new Date())
-  // if (_restartTime < 0) _restartTime += 1000 * 60 * 60 * 24
-  // setTimeout(function () {
-  //   console.log('Restarting bot... Time is ' + new Date())
-  //   process.exit(137)
-  // }, _restartTime)
+  let _restartTime = (new Date().setHours(23, 59, 0, 0) - new Date())
+  if (_restartTime < 0) _restartTime += 1000 * 60 * 60 * 24
+  setTimeout(function () {
+    console.log('Restarting bot... Time is ' + new Date())
+    process.exit(137)
+  }, _restartTime)
 })()
