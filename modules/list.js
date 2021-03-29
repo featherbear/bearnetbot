@@ -69,7 +69,7 @@ module.exports = function (api) {
       switch (action.toLowerCase()) {
         case 'add':
           if (content.length == 0) throw new Error('Supply an entry name!')
-          await trello.addCard(content, null, listId)
+          await trello.addCard(content.replace(/\r?\n/g, ''), null, listId)
 
           return 'Added item!'
         case 'delete':
