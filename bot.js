@@ -46,7 +46,8 @@ const Client = require('facebook-messenger-puppeteer')
     'permissions',
     'translate',
     'ping',
-    'list'
+    'list',
+    'threes'
   ]
 
   const commands = {}
