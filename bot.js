@@ -105,7 +105,7 @@ const Client = require('facebook-messenger-puppeteer')
         timerIgnore()
         ignore[message.thread] = true
 
-        await bot.sendMessage(message.thread, '\xf0\x9f\x98\x98')
+        await bot.sendMessage(message.thread, '😘')
         return
       }
     }
