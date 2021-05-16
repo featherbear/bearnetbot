@@ -117,6 +117,25 @@ const Client = require('facebook-messenger-puppeteer')
         return
       }
     } 
+    
+    if (/hm+/gi.test(message.body)) {
+      if (ignore[message.thread] !== true) {
+        ignore[message.thread] = timerIgnore()
+        await bot.sendMessage(message.thread, '\u1F914')
+        return
+      }
+    } 
+    
+    if (/^i'?m /gi.test(message.body)) {
+      if (ignore[message.thread] !== true) {
+        ignore[message.thread] = timerIgnore()
+        const str = message.body.split(' ')
+        str = str.replace(/[&\/\\#,+()$~%.'":*?<>{}!`]/g, '').replace(/^i'?m/gi, "Hello ")
+        const concatStr = str.concat("! I'm BearNetBot. Nice to meet you!")
+        await bot.sendMessage(message.thread, concatStr)
+        return
+      }
+    } 
   
     // Check if the message starts with the command prefix
     if (!message.body.startsWith(config.bot_command_prefix)) return
